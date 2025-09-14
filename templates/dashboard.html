@@ -1,0 +1,42 @@
+<!-- templates/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🛰️ FleetBridge Interface</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="control-room">
+        <div id="map3d"></div>
+        <div class="hud-panel top-left">
+            <div id="fleetstatus"></div>
+            <div id="studio-status">
+                <h3>Studio Status</h3>
+                <div id="studio-log-list">Awaiting connection...</div>
+            </div>
+        </div>
+        <div class="hud-panel top-right" id="camera-controls"></div>
+        <div class="hud-panel bottom-left" id="selection-info">Awaiting Selection...</div>
+        <div class="hud-panel bottom-right plot-container">
+            <div class="plot-panel"><canvas id="fleetplot"></canvas></div>
+            <div class="plot-panel"><canvas id="fleetdrift"></canvas></div>
+            <!-- ADD THIS NEW PANEL TO YOUR HTML, LIKELY INSIDE THE <div class="sidebar"> -->
+<div class="panel">
+    <h2>Trajectory Plotter</h2>
+    <div class="control-group">
+        <input type="text" id="objectIdInput" placeholder="Enter NEO Name (e.g., Apophis)">
+        <button id="plotButton">Plot Trajectory</button>
+    </div>
+    <div id="plotStatus" class="status-text"></div>
+</div>
+        </div>
+    </div>
+    <div class="close-btn" onclick="window.pywebview.api.shutdown()">✖</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/static/interface.js"></script>
+    <script src="/static/map3d.js"></script>
+</body>
+</html>
