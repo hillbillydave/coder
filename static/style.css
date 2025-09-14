@@ -1,0 +1,38 @@
+/* static/style.css */
+:root { --glow-color: #00ffe0; --border-radius: 5px; }
+html, body { margin: 0; padding: 0; overflow: hidden; background-color: #000; font-family: 'Orbitron', sans-serif; color: var(--glow-color); }
+.control-room { position: relative; width: 100vw; height: 100vh; }
+.close-btn { position: fixed; top: 15px; right: 20px; font-size: 1.5em; color: #ff4444; cursor: pointer; z-index: 100; text-shadow: 0 0 5px #ff0000; }
+#map3d { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+#map3d canvas { cursor: grab; }
+#map3d canvas:active { cursor: grabbing; }
+.hud-panel {
+    position: absolute; background: rgba(0, 20, 30, 0.75); border: 1px solid var(--glow-color);
+    padding: 10px; box-shadow: 0 0 10px var(--glow-color), inset 0 0 15px rgba(0, 255, 224, 0.1);
+    border-radius: var(--border-radius); z-index: 10; backdrop-filter: blur(5px); font-size: 0.9em;
+}
+.top-left { top: 20px; left: 20px; width: 300px; }
+.top-right { top: 20px; right: 60px; max-width: 500px; display: flex; flex-wrap: wrap; gap: 8px; }
+.bottom-left { bottom: 20px; left: 20px; width: 300px; max-height: 40%; overflow-y: auto; }
+.bottom-right { bottom: 20px; right: 20px; width: 350px; }
+#camera-controls { border-color: #ffaa00; box-shadow: 0 0 10px #ffaa00; }
+#camera-controls button { background: transparent; border: 1px solid #ffaa00; color: #ffaa00; padding: 4px 8px; cursor: pointer; border-radius: 3px; font-size: 0.8em; }
+#camera-controls button:hover { background-color: #ffaa00; color: #0b0f1a; }
+#camera-controls button.active { background-color: #ffaa00; color: #0b0f1a; box-shadow: 0 0 10px #ffaa00; }
+.plot-container { padding: 5px; }
+.plot-panel { height: 120px; width: 100%; margin-bottom: 5px; }
+.plot-panel:last-child { margin-bottom: 0; }
+.loader { text-align: center; padding: 10px; font-style: italic; color: #888; }
+.alert-pulse { border-color: #ff4444 !important; animation: pulseRedBorder 1.5s infinite; }
+#studio-status { margin-top: 10px; }
+#studio-status h3, #selection-info h3 { margin: 0 0 8px 0; text-align: center; font-size: 1em; color: #ffaa00; border-bottom: 1px solid #ffaa00; padding-bottom: 5px; }
+#studio-log-list { font-family: 'Courier New', monospace; font-size: 0.8em; max-height: 150px; overflow-y: auto; }
+.studio-log-item { margin-bottom: 5px; }
+.speaker-daisy { color: #ff00ff; font-weight: bold; }
+.speaker-vespera { color: #00ffe0; font-weight: bold; }
+.speaker-academy { color: #ffaa00; font-weight: bold; }
+.message { color: #cccccc; }
+#selection-info .diagnostic-report { font-size: 0.85em; }
+#selection-info .diagnostic-report span { display: block; margin-bottom: 4px; }
+#selection-info .diagnostic-report .value { color: #ff4444; font-weight: bold; margin-left: 5px; }
+@keyframes pulseRedBorder { 0% { box-shadow: 0 0 5px #ff4444; } 50% { box-shadow: 0 0 25px #ff4444; } 100% { box-shadow: 0 0 5px #ff4444; } }```
