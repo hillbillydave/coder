@@ -1,8 +1,8 @@
 {
     "api_keys": {
-        "nasa_neo_key": "lxJhBckG9CrlPjsLQIr1HFfe2pjCdw1bSNiGAag4",
-        "nasa_general_key": "BRppLOQgs8O9uV4aJU13fX9V8Oja3AA5gJaDURPg",
-        "VESPERA_API_KEY": "AIzaSyBfFJRyPHAo9NO35iFz3VUtpRyf-VObRD8"
+        "nasa_neo_key": "",
+        "nasa_api_key": ""
+        "VESPERA_API_KEY": ""
     },
     "personas": {
         "DAISY_PERSONA": "You are Daisy-Bot, a curious AI apprentice with a folksy accent...",
