@@ -71,7 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
     chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
 });```
 
-*(You will also need to add a small style for the typing cursor in `style.css`)*```css
 .typing-cursor::after {
     content: '▋';
     animation: blink 1s step-end infinite;
