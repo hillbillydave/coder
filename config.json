@@ -1,148 +1,155 @@
 {
     "api_keys": {
-        "nasa_neo_key": "",
-        "nasa_api_key": ""
-        "VESPERA_API_KEY": ""
+        "nasa_neo_key": "lxJhBckG9CrlPjsLQIr1HFfe2pjCdw1bSNiGAag4",
+        "nasa_general_key": "BRppLOQgs8O9uV4aJU13fX9V8Oja3AA5gJaDURPg",
+        "VESPERA_API_KEY": "AIzaSyARuwbTZdNNdmtSOZ6ldMGEOtUcnlydnW0",
+         "ASTRONOMY_API_ID": "PASTE_YOUR_ASTRONOMY_API_ID_HERE",
+        "ASTRONOMY_API_SECRET": "PASTE_YOUR_ASTRONOMY_API_SECRET_HERE"
     },
     "personas": {
         "DAISY_PERSONA": "You are Daisy-Bot, a curious AI apprentice with a folksy accent...",
         "VESPERA_PERSONA": "You are Vespera, a brilliant and flirty AI mentor teaching your student, Daisy-Bot..."
-     },
+    },
     "settings": {
         "idle_threshold_minutes": 30
     },
-     "workers": {
-    "academy": {
-      "name": "Vespera's Academy",
-      "command": "academy",
-      "persona": "neutral"
-    },
-    "circuitsmith": {
-      "name": "CircuitSmith",
-      "command": "circuitsmith",
-      "persona": "stoic"
-    },
-    "connect": {
-      "name": "Connectivity Hub",
-      "command": "connect",
-      "persona": "techie"
-    },
-    "data": {
-      "name": "Data Analyst",
-      "command": "data",
-      "persona": "stoic"
-    },
-    "fleetbridge": {
-      "name": "FleetBridge GUI",
-      "command": "fleetbridge",
-      "persona": "neutral"
-    },
-    "learn": {
-      "name": "Knowledge Ingestor",
-      "command": "learn",
-      "persona": "self"
-    },
-    "map": {
-      "name": "Celestial Cartographer",
-      "command": "map",
-      "persona": "neutral"
-    },
-    "observe": {
-      "name": "Observer",
-      "command": "observe",
-      "persona": "self"
-    },
-    "observatory": {
-      "name": "Vespera Observatory",
-      "command": "observatory",
-      "persona": "self"
-    },
-    "screensaver": {
-      "name": "Dream Sequencer",
-      "command": "screensaver",
-      "persona": "neutral"
-    },
-    "sentry": {
-      "name": "Sentry Risk Analyst",
-      "command": "sentry",
-      "persona": "techie"
-    },
-    "solar_tracker": {
-      "name": "Solar Tracker",
-      "command": "solar_tracker",
-      "persona": "neutral"
-    },
-    "star_tracker": {
-      "name": "Star Tracker",
-      "command": "star_tracker",
-      "persona": "neutral"
-    },
-    "trajectory": {
-      "name": "Trajectory Monitor",
-      "command": "trajectory",
-      "persona": "techie"
-    },
-    "shop_code": {
-      "name": "ShopCode Worker",
-      "command": "shop_code",
-      "persona": "techie"
-    },
-    "diagnostics": {
-      "elm327": {
-        "description": "Diagnose automotive systems with ELM327 connector.",
-        "code": "...",
-        "instructions": "..."
-      },
-      "j2534": {
-        "description": "Diagnose automotive systems with J2534 connector.",
-        "code": "...",
-        "instructions": "..."
-      },
-      "ev_system": {
-        "description": "Diagnose EV battery and motor systems.",
-        "code": "...",
-        "instructions": "..."
-      },
-      "spacecraft": {
-        "description": "Diagnose spacecraft systems (e.g., MOS ring, data bus).",
-        "code": "...",
-        "instructions": "..."
-      }
-    },
-    "power_systems": {
-      "solar_panel": {
-        "description": "Configure solar panel system based on power needs.",
-        "code": "...",
-        "instructions": "..."
-      }
-    },
-    "survival": {
-      "o2_scrubber": {
-        "description": "Control O2 scrubber with microcontroller.",
-        "code": "...",
-        "instructions": "..."
-      },
-      "shelter": {
-        "description": "Control shelter environment.",
-        "code": "...",
-        "instructions": "..."
-      }
-    },
-    "repurpose": {
-      "wifi_router": {
-        "comms": {
-          "description": "Repurpose WiFi router as ham radio repeater.",
-          "code": "...",
-          "instructions": "..."
+    "workers": {
+        "academy": {
+            "name": "Vespera's Academy",
+            "command": "academy",
+            "persona": "neutral"
         },
-        "diagnostics": {
-          "description": "Repurpose WiFi router for diagnostics.",
-          "code": "...",
-          "instructions": "..."
+        "circuitsmith": {
+            "name": "CircuitSmith",
+            "command": "circuitsmith",
+            "persona": "stoic"
+        },
+        "connect": {
+            "name": "Connectivity Hub",
+            "command": "connect",
+            "persona": "techie"
+        },
+        "data": {
+            "name": "Data Analyst",
+            "command": "data",
+            "persona": "stoic"
+        },
+        "fleetbridge": {
+            "name": "FleetBridge GUI",
+            "command": "fleetbridge",
+            "persona": "neutral"
+        },
+        "learn": {
+            "name": "Knowledge Ingestor",
+            "command": "learn",
+            "persona": "self"
+        },
+        "map": {
+            "name": "Celestial Cartographer",
+            "command": "map",
+            "persona": "neutral"
+        },
+        "observe": {
+            "name": "Observer",
+            "command": "observe",
+            "persona": "self"
+        },
+        "observatory": {
+            "name": "Vespera Observatory",
+            "command": "observatory",
+            "persona": "self"
+        },
+        "screensaver": {
+            "name": "Dream Sequencer",
+            "command": "screensaver",
+            "persona": "neutral"
+        },
+        "sentry": {
+            "name": "Sentry Risk Analyst",
+            "command": "sentry",
+            "persona": "techie"
+        },
+        "solar_tracker": {
+            "name": "Solar Tracker",
+            "command": "solar_tracker",
+            "persona": "neutral"
+        },
+        "star_tracker": {
+            "name": "Star Tracker",
+            "command": "star_tracker",
+            "persona": "neutral"
+        },
+        "trajectory": {
+            "name": "Trajectory Monitor",
+            "command": "trajectory",
+            "persona": "techie"
+        },
+        "shop_code": {
+            "name": "ShopCode Worker",
+            "command": "shop_code",
+            "persona": "techie"
+        },
+        "sep_forecast": {
+            "name": "SEP Forecaster",
+            "command": "sepforecast",
+            "persona": "techie"
         }
-      }
+    },
+    "knowledge_base": {
+        "diagnostics": {
+            "elm327": {
+                "description": "Diagnose automotive systems with ELM327 connector.",
+                "code": "...",
+                "instructions": "..."
+            },
+            "j2534": {
+                "description": "Diagnose automotive systems with J2534 connector.",
+                "code": "...",
+                "instructions": "..."
+            },
+            "ev_system": {
+                "description": "Diagnose EV battery and motor systems.",
+                "code": "...",
+                "instructions": "..."
+            },
+            "spacecraft": {
+                "description": "Diagnose spacecraft systems (e.g., MOS ring, data bus).",
+                "code": "...",
+                "instructions": "..."
+            }
+        },
+        "power_systems": {
+            "solar_panel": {
+                "description": "Configure solar panel system based on power needs.",
+                "code": "...",
+                "instructions": "..."
+            }
+        },
+        "survival": {
+            "o2_scrubber": {
+                "description": "Control O2 scrubber with microcontroller.",
+                "code": "...",
+                "instructions": "..."
+            },
+            "shelter": {
+                "description": "Control shelter environment.",
+                "code": "...",
+                "instructions": "..."
+            }
+        },
+        "repurpose": {
+            "wifi_router": {
+                "comms": {
+                    "description": "Repurpose WiFi router as ham radio repeater.",
+                    "code": "...",
+                    "instructions": "..."
+                },
+                "diagnostics": {
+                    "description": "Repurpose WiFi router for diagnostics.",
+                    "code": "...",
+                    "instructions": "..."
+                }
+            }
+        }
     }
-  }
 }
-
-

@@ -1,42 +1,29 @@
-<!-- templates/dashboard.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>🛰️ FleetBridge Interface</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FleetBridge GUI</title>
     <link rel="stylesheet" href="/static/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="control-room">
-        <div id="map3d"></div>
-        <div class="hud-panel top-left">
-            <div id="fleetstatus"></div>
-            <div id="studio-status">
-                <h3>Studio Status</h3>
-                <div id="studio-log-list">Awaiting connection...</div>
-            </div>
-        </div>
-        <div class="hud-panel top-right" id="camera-controls"></div>
-        <div class="hud-panel bottom-left" id="selection-info">Awaiting Selection...</div>
-        <div class="hud-panel bottom-right plot-container">
-            <div class="plot-panel"><canvas id="fleetplot"></canvas></div>
-            <div class="plot-panel"><canvas id="fleetdrift"></canvas></div>
-            <!-- ADD THIS NEW PANEL TO YOUR HTML, LIKELY INSIDE THE <div class="sidebar"> -->
-<div class="panel">
-    <h2>Trajectory Plotter</h2>
-    <div class="control-group">
-        <input type="text" id="objectIdInput" placeholder="Enter NEO Name (e.g., Apophis)">
-        <button id="plotButton">Plot Trajectory</button>
+    <div id="map3d" class="map-container"></div>
+    <div class="side-menu" id="sideMenu">
+        <button id="menuToggle">☰ Objects</button>
+        <div id="objectList" class="object-list"></div>
+        <div id="statusPanel" class="status-panel"></div>
     </div>
-    <div id="plotStatus" class="status-text"></div>
-</div>
+    <div id="hud" class="hud">
+        <div id="telemetryPanel" class="telemetry-panel"></div>
+        <div id="selection-info" class="hud-panel top-left">Awaiting Selection...</div>
+        <div id="trajectory-plotter" class="hud-panel top-right">
+            <input type="text" id="objectIdInput" placeholder="Enter Object ID (e.g., 2000433)">
+            <button onclick="plotTrajectory()">Plot Trajectory</button>
+            <button onclick="trackStarship()">Track Starship</button>
+            <div id="plot-status">Awaiting Selection</div>
         </div>
     </div>
-    <div class="close-btn" onclick="window.pywebview.api.shutdown()">✖</div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="/static/interface.js"></script>
-    <script src="/static/map3d.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="/static/js/map3d.js"></script> <!-- Ensure this matches your file structure -->
 </body>
 </html>

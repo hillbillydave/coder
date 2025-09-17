@@ -1,0 +1,127 @@
+# fault_recovery_subsystem.py
+
+import datetime
+
+class FaultRecoveryEngine:
+    def __init__(self):
+        self.fault_log = []
+        self.recovery_scripts = {}
+        self.commentary_mode = True
+        self.status_log = []
+
+    # ┌────────────────────────────────────────────┐
+    # │ Fault Logging                              │
+    # └────────────────────────────────────────────┘
+
+    def log_fault(self, subsystem_name, fault_description, severity="medium"):
+        timestamp = datetime.datetime.now().isoformat()
+        fault_entry = {
+            "subsystem": subsystem_name,
+            "description": fault_description,
+            "severity": severity,
+            "timestamp": timestamp
+        }
+        self.fault_log.append(fault_entry)
+        self.narrate(f"⚠️ Fault logged in '{subsystem_name}' [{severity}]: {fault_description}")
+
+    def get_fault_log(self):
+        return self.fault_log
+
+    # ┌────────────────────────────────────────────┐
+    # │ Recovery Protocols                         │
+    # └────────────────────────────────────────────┘
+
+    def register_recovery_script(self, subsystem_name, recovery_func):
+        self.recovery_scripts[subsystem_name] = recovery_func
+        self.narrate(f"Recovery protocol registered for '{subsystem_name}'.")
+
+    def attempt_recovery(self, subsystem_name):
+        if subsystem_name in self.recovery_scripts:
+            try:
+                self.recovery_scripts[subsystem_name]()
+                self.narrate(f"✅ Recovery executed for '{subsystem_name}'.")
+                self.log_status(f"Recovery successful for '{subsystem_name}'.")
+            except Exception as e:
+                self.narrate(f"❌ Recovery failed for '{subsystem_name}': {e}")
+                self.log_status(f"Recovery error in '{subsystem_name}': {e}")
+        else:
+            self.narrate(f"No recovery script found for '{subsystem_name}'.")
+
+    # ┌────────────────────────────────────────────┐
+    # │ Commentary & Logging                       │
+    # └────────────────────────────────────────────┘
+
+    def narrate(self, message):
+        if self.commentary_mode:
+            print(f"[Recovery Commentary] {message}")
+
+    def log_status(self, message):
+        self.status_log.append(message)
+
+    def initialize(self):
+        self.log_status("Fault Recovery Engine initialized.")
+        self.narrate("Monitoring subsystem health. Recovery protocols standing by.")
+# fault_recovery_subsystem.py
+
+import datetime
+
+class FaultRecoveryEngine:
+    def __init__(self):
+        self.fault_log = []
+        self.recovery_scripts = {}
+        self.commentary_mode = True
+        self.status_log = []
+
+    # ┌────────────────────────────────────────────┐
+    # │ Fault Logging                              │
+    # └────────────────────────────────────────────┘
+
+    def log_fault(self, subsystem_name, fault_description, severity="medium"):
+        timestamp = datetime.datetime.now().isoformat()
+        fault_entry = {
+            "subsystem": subsystem_name,
+            "description": fault_description,
+            "severity": severity,
+            "timestamp": timestamp
+        }
+        self.fault_log.append(fault_entry)
+        self.narrate(f"⚠️ Fault logged in '{subsystem_name}' [{severity}]: {fault_description}")
+
+    def get_fault_log(self):
+        return self.fault_log
+
+    # ┌────────────────────────────────────────────┐
+    # │ Recovery Protocols                         │
+    # └────────────────────────────────────────────┘
+
+    def register_recovery_script(self, subsystem_name, recovery_func):
+        self.recovery_scripts[subsystem_name] = recovery_func
+        self.narrate(f"Recovery protocol registered for '{subsystem_name}'.")
+
+    def attempt_recovery(self, subsystem_name):
+        if subsystem_name in self.recovery_scripts:
+            try:
+                self.recovery_scripts[subsystem_name]()
+                self.narrate(f"✅ Recovery executed for '{subsystem_name}'.")
+                self.log_status(f"Recovery successful for '{subsystem_name}'.")
+            except Exception as e:
+                self.narrate(f"❌ Recovery failed for '{subsystem_name}': {e}")
+                self.log_status(f"Recovery error in '{subsystem_name}': {e}")
+        else:
+            self.narrate(f"No recovery script found for '{subsystem_name}'.")
+
+    # ┌────────────────────────────────────────────┐
+    # │ Commentary & Logging                       │
+    # └────────────────────────────────────────────┘
+
+    def narrate(self, message):
+        if self.commentary_mode:
+            print(f"[Recovery Commentary] {message}")
+
+    def log_status(self, message):
+        self.status_log.append(message)
+
+    def initialize(self):
+        self.log_status("Fault Recovery Engine initialized.")
+        self.narrate("Monitoring subsystem health. Recovery protocols standing by.")
+

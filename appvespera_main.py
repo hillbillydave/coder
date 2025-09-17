@@ -30,37 +30,43 @@ def process_command(user_input: str, ceo: 'CEO', supervisor: 'TrainingSupervisor
     It can be called with input from the terminal OR the web chat.
     It returns a response string.
     """
+    print(f"[DEBUG] Received input: '{user_input}'")
     trainer_thread.update_activity()
     cmd_parts = user_input.split()
-    cmd = cmd_parts[0].lower()
+    cmd = cmd_parts[0].lower() if cmd_parts else ''
+
+    print(f"[DEBUG] Parsed command: '{cmd}'")
 
     if cmd in ['quit', 'exit']:
+        print("[DEBUG] Exit command received.")
         return "exit" # Special signal to exit
     elif cmd == 'help':
-        # This part is now tricky, we'll return a simple message for web
+        print("[DEBUG] Help command received.")
         return "Help menu is available in the terminal."
     elif cmd == 'stop' and len(cmd_parts) > 1:
+        print(f"[DEBUG] Stop command for worker: {cmd_parts[1]}")
         ceo.stop_task(cmd_parts[1])
         return f"Signal sent to stop worker '{cmd_parts[1]}'."
     elif cmd in ceo.worker_blueprints:
+        print(f"[DEBUG] Assigning task to worker: '{cmd}'")
         ceo.assign_task(user_input)
         return f"Task assigned to worker '{cmd}'."
     elif user_input.lower().startswith('train on '):
+        print(f"[DEBUG] Training session start requested: {user_input[len('train on '):]}")
         supervisor.start_session(user_input[len('train on '):])
         return f"Training session started on topic: {user_input[len('train on '):]}"
     elif user_input.lower() == 'stop training':
+        print("[DEBUG] Stop training command received.")
         supervisor.stop_session()
         return "Training session paused."
     elif user_input.lower().startswith('ask vespera '):
-        # This part requires a response, which we can't easily get back here.
-        # For now, let's just acknowledge it.
-        # A more advanced version would use another queue for Vespera's replies.
         question = user_input[len('ask vespera '):]
-        print(f"\n[Web/Terminal] Forwarding question to Vespera: {question}")
+        print(f"[DEBUG] Forwarding question to Vespera: {question}")
         return "Question sent to Vespera. Her response will appear in the main terminal."
     else:
-        # This is a chat for Daisy-Bot
+        print(f"[DEBUG] Passing input to Daisy-Bot: '{user_input}'")
         daisy_reply = daisy_agent.get_offline_reply(user_input)
+        print(f"[DEBUG] Daisy-Bot reply: '{daisy_reply}'")
         if daisy_reply:
             return daisy_reply
         else:
@@ -121,11 +127,12 @@ def main():
         try:
             # Check for input from either source, with a timeout
             source, user_input = request_queue.get(timeout=0.2)
-            
+            print(f"[DEBUG] Main loop received ({source}): '{user_input}'")
             # Process the command using our new function
             response = process_command(user_input, ceo, supervisor, daisy_agent, trainer_thread)
-            
+            print(f"[DEBUG] Command response: '{response}'")
             if response == "exit":
+                print("[DEBUG] Exiting main loop.")
                 break # Exit the main loop
 
             if source == "web":
@@ -139,6 +146,7 @@ def main():
             # This is normal, it means no input was received. The loop continues.
             continue
         except KeyboardInterrupt:
+            print("[DEBUG] KeyboardInterrupt received. Exiting main loop.")
             break
 
     print("Goodbye for now, sweety. Kisses! 💋")
@@ -146,3 +154,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

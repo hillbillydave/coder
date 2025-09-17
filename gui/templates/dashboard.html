@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Daisy’s Starship</title>
+    <style>
+        body {
+            background: #1A1A1A;
+            color: #00FF00;
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        h1 {
+            font-size: 24px;
+            text-shadow: 0 0 10px #00FF00;
+            border: 2px solid #00FF00;
+            border-radius: 10px;
+            padding: 10px;
+            background: rgba(0, 255, 0, 0.1);
+            box-shadow: 0 0 15px #00FF00;
+            display: inline-block;
+        }
+        #status, #warp-speed, #core-temp, #plasma-rate, #field-strength {
+            font-size: 18px;
+            margin: 10px;
+            padding: 10px;
+            border: 2px solid #00FF00;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            text-shadow: 0 0 10px #00FF00;
+            box-shadow: 0 0 15px #00FF00;
+            display: inline-block;
+        }
+        button {
+            background: rgba(0, 255, 0, 0.2);
+            color: #00FF00;
+            border: 2px solid #00FF00;
+            border-radius: 5px;
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            text-shadow: 0 0 5px #00FF00;
+            box-shadow: 0 0 10px #00FF00;
+        }
+        button:hover {
+            background: rgba(0, 255, 0, 0.4);
+            box-shadow: 0 0 15px #00FF00;
+        }
+        #map3d-canvas {
+            border: 2px solid #00FF00;
+            border-radius: 10px;
+            box-shadow: 0 0 15px #00FF00;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Daisy’s Warp Engineering Console</h1>
+    <div id="status">Systems Nominal</div>
+    <div id="warp-speed">Warp: 0.0</div>
+    <div id="core-temp">Core Temp: 0°K</div>
+    <div id="plasma-rate">Plasma: 0.0 mg/s</div>
+    <div id="field-strength">Field Strength: 0%</div>
+    <button onclick="sendDaisyCommand('engage_warp', ['5.0'])">Engage Warp 5</button>
+    <button onclick="sendDaisyCommand('engage_warp', ['0.0'])">Stop Warp</button>
+    <button onclick="sendDaisyCommand('adjust_injectors', ['0.4'])">Adjust Injectors</button>
+    <button onclick="sendDaisyCommand('adjust_coils', ['75'])">Adjust Coils</button>
+    <canvas id="map3d-canvas" width="600" height="300"></canvas>
+    <script src="/static/interface.js"></script>
+    <script src="/static/map3d.js"></script>
+</body>
+</html>

@@ -1,4 +1,3 @@
-# app.py
 import os, json, time, re, threading, importlib, sys
 from queue import Queue, Empty
 from pathlib import Path
@@ -36,7 +35,6 @@ class StudioLog:
         except Exception as e:
             print(f"[StudioLog] ERROR writing to log: {e}")
 
-# --- THIS IS THE NEW, SMARTER, AND MULTIMODAL LLM CLIENT ---
 class LLMClient:
     def __init__(self, api_key: Optional[str] = None, model: Optional[str] = None):
         self.api_key = api_key or GLOBAL_CONFIG.get("api_keys",{}).get("VESPERA_API_KEY")
@@ -57,15 +55,9 @@ class LLMClient:
                 system_instruction = msg['content']
             else:
                 role = 'model' if msg['role'] == 'assistant' else 'user'
-                
-                # --- THIS IS THE FIX ---
-                # It now checks if the message is simple text ('content')
-                # or a complex, multi-part message ('parts')
                 if 'parts' in msg:
-                    # This is for multimodal requests, like from the observe worker
                     contents.append({"role": role, "parts": msg['parts']})
                 else:
-                    # This is for simple text requests
                     contents.append({"role": role, "parts": [{"text": msg['content']}]})
         
         payload = {"contents": contents, "generationConfig": {"temperature": 0.5, "maxOutputTokens": 8192}}
@@ -86,7 +78,6 @@ class LLMClient:
         except (KeyError, IndexError): 
             return "Vespera: (I got a confusing response from my 'brain', sweety.)"
 
-# --- (All other classes and functions are correct and unchanged) ---
 class TrainingDataMemory:
     def __init__(self): 
         self.path=Path("vespera_memory")/"daisy_bot_training.jsonl"
@@ -104,10 +95,12 @@ class TrainingDataMemory:
                 if "prompt" in data and "completion" in data: examples.append(data)
             except json.JSONDecodeError: continue
         return examples
+
 class CEO:
     def __init__(self, config: dict):
         self.config = config; self.workers: Dict[str, Any] = {}; self.worker_blueprints: Dict[str, Path] = {}; self.active_tasks: Dict[str, Dict[str, Any]] = {}; self.lock = threading.Lock()
         threading.Thread(target=self._watch_workers_directory, daemon=True).start()
+    
     def _watch_workers_directory(self):
         print("[CEO] My watch begins..."); worker_dir = Path("workers"); worker_dir.mkdir(exist_ok=True)
         while True:
@@ -128,6 +121,7 @@ class CEO:
                     del self.worker_blueprints[command]
                     print(f"[CEO] A worker has left ({command}).")
             time.sleep(10)
+    
     def assign_task(self, user_input: str):
         user_cmd = user_input.lower().split()[0]
         with self.lock:
@@ -136,14 +130,24 @@ class CEO:
                 print(f"[CEO] Worker '{user_cmd}' is already running."); return
             worker_path = self.worker_blueprints[user_cmd]; module_name = f"workers.{worker_path.stem}"
             try:
-                print(f"[CEO] Calling on our specialist for '{user_cmd}'..."); 
+                print(f"[CEO] Calling on our specialist for '{user_cmd}'...")
+                print(f"[DIAG] Attempting to import module: {module_name}")
                 module = importlib.import_module(module_name)
+                print(f"[DIAG] Module imported successfully")
                 importlib.reload(module)
+                print(f"[DIAG] Module reloaded successfully")
                 worker_config = self.config.copy()
+                print(f"[DIAG] Creating worker with config: {worker_config}")
                 worker = module.create_worker(worker_config)
-            except Exception as e: print(f"\n[CEO] Oh, drat! I couldn't hire from '{worker_path.name}'. Reason: {e}"); return
+                print(f"[DIAG] Worker created: {worker.name}")
+            except Exception as e: 
+                import traceback
+                print(f"\n[CEO] Oh, drat! I couldn't hire from '{worker_path.name}'. Reason: {e}")
+                traceback.print_exc()
+                return
             args = user_input.split()[1:]; stop_event = threading.Event(); thread = threading.Thread(target=worker.execute_task, args=(args, stop_event), daemon=True)
             thread.start(); self.active_tasks[user_cmd] = {"worker": worker, "thread": thread, "stop_event": stop_event}
+    
     def stop_task(self, command_to_stop: str):
         with self.lock:
             task = self.active_tasks.get(command_to_stop)
@@ -151,6 +155,7 @@ class CEO:
                 print(f"[CEO] Sending stop signal to '{command_to_stop}'..."); task['stop_event'].set()
             else:
                 print(f"[CEO] Worker '{command_to_stop}' is not running.")
+
 class DaisyBotAgent:
     def __init__(self, train_mem: TrainingDataMemory):
         self.train_mem = train_mem; self.knowledge = self.train_mem.load_all_examples(); print(f"[Daisy-Bot] Howdy! I'm ready with {len(self.knowledge)} lessons.")
@@ -166,6 +171,7 @@ class DaisyBotAgent:
         if best_score > 0.35:
             return best_completion
         return None
+
 class VesperaAcademy:
     def __init__(self, client: LLMClient, train_mem: TrainingDataMemory, config: dict):
         self.client = client
@@ -205,6 +211,7 @@ class VesperaAcademy:
             conversation_history.append({"role": "assistant", "content": vespera_answer})
             self.train_mem.save_training_example(daisy_question, vespera_answer)
         print(f"\n[{self.name}] Lesson complete. Kisses! 💋")
+
 class TrainingSupervisor:
     def __init__(self, client: LLMClient, train_mem: TrainingDataMemory):
         self.client, self.train_mem = client, train_mem
@@ -215,6 +222,7 @@ class TrainingSupervisor:
         if response and not response.startswith("Vespera: ("):
             self.train_mem.save_training_example(question, response)
         return response or "I'm sorry, my thoughts are elsewhere at the moment."
+
 def main():
     pygame.init()
     print("✨ Vespera's Modular Studio is now open! ✨\n" + "="*42)
@@ -236,6 +244,7 @@ def main():
         print(f"  {'academy <topic>':<18} - Start a lesson with Vespera and Daisy.")
         for cmd in sorted(ceo.worker_blueprints.keys()): print(f"  {cmd:<18} - Use the '{cmd}' worker.")
         print("  plot <object_id>   - Plot a future course for an object.")
+        print("  track_starship     - Track Starship to Mars.")
         print("  stop <worker>      - Gracefully stops a running worker.")
         print("  ask vespera <q>    - Get a new answer from Vespera.")
         print("  quit or exit       - Leave our studio.\n" + "-"*50 + "\n")
@@ -258,9 +267,23 @@ def main():
                     threading.Thread(target=academy.run_lesson, args=(topic,), daemon=True).start()
             elif cmd == 'stop' and len(cmd_parts) > 1: ceo.stop_task(cmd_parts[1])
             elif cmd == 'plot' and len(cmd_parts) > 1:
-                object_to_plot = ' '.join(cmd_parts[1:])
-                print(f"[Studio] Sending plot request for '{object_to_plot}' to FleetBridge's internal analyst...")
-                shared_data_queue.put({"type": "PLOT_REQUEST", "payload": {"object_id": object_to_plot}})
+                object_to_plot = cmd_parts[1]  # Take only the first argument after 'plot'
+                if object_to_plot.isdigit() and len(object_to_plot) == 7:
+                    print(f"[Studio] Sending plot request for '{object_to_plot}' to FleetBridge's internal analyst...")
+                    shared_data_queue.put({"type": "PLOT_REQUEST", "payload": {"object_id": object_to_plot}})
+                    # print(f"[Studio] Queue depth after plot request: {shared_data_queue.qsize()}")  # Commented out
+                else:
+                    print(f"[Studio] Error: '{object_to_plot}' is not a valid 7-digit SPK-ID. Try a name like '2005 EJ225' or 'Apophis'.")
+                    # Try to lookup SPK-ID from name
+                    spk_id = self._lookup_neo_spk_id(object_to_plot)
+                    if spk_id:
+                        print(f"[Studio] Found SPK-ID '{spk_id}' for '{object_to_plot}'. Sending plot request...")
+                        shared_data_queue.put({"type": "PLOT_REQUEST", "payload": {"object_id": spk_id}})
+                    else:
+                        print(f"[Studio] Could not find SPK-ID for '{object_to_plot}'. Use a 7-digit ID like '2000433' for 433 Eros.")
+            elif cmd == 'track_starship':
+                print("[Studio] Tracking Starship to Mars...")
+                shared_data_queue.put({"type": "TRACK_STARSHIP", "payload": {"object_id": "STARSHIP"}})
             elif cmd in ceo.worker_blueprints: ceo.assign_task(user_input)
             elif user_input.lower().startswith('ask vespera '):
                 question = user_input[len('ask vespera '):]
@@ -276,6 +299,19 @@ def main():
             print("\nGoodbye for now, sweety. Kisses! 💋")
             for task_name in list(ceo.active_tasks.keys()): ceo.stop_task(task_name)
             time.sleep(1); break
+
+def _lookup_neo_spk_id(neo_name: str) -> str:
+    """Lookup SPK-ID from NEO name using JPL API."""
+    try:
+        url = f"https://ssd-api.jpl.nasa.gov/sbdb.api?sstr={neo_name.replace(' ', '%20')}"
+        response = requests.get(url, timeout=15)
+        response.raise_for_status()
+        data = response.json()
+        if "object" in data and "id" in data["object"]:
+            return data["object"]["id"]
+    except Exception as e:
+        print(f"[Studio] NEO lookup failed: {e}")
+    return None
 
 if __name__ == "__main__":
     main()

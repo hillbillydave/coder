@@ -1,108 +1,87 @@
-# workers/solar_tracker_worker.py
+# workers/star_tracker_worker.py
+import threading
 import time
 import requests
-import json
-from datetime import datetime
+from typing import List
 
-FLEETBRIDGE_ENDPOINT = "http://127.0.0.1:5555/update"
-CONFIG_PATH = "config/solar_apis.json"
-ALERT_PATH = "config/solar_alerts.json"
+# Import the base class to be a valid worker
+from workers.worker_base import WorkerBase
 
-# Default alert thresholds
-DEFAULT_ALERTS = {
-    "flux": { "warn": 150, "critical": 200 },
-    "sunspots": { "warn": 80, "critical": 120 },
-    "solarWind": {
-        "speed": { "warn": 500, "critical": 700 },
-        "density": { "warn": 6, "critical": 10 }
-    },
-    "geomagneticIndex": { "warn": 5, "critical": 7 }
-}
+# It's good practice to get the API key from the main config
+API_URL = "https://api.astronomyapi.com/api/v2/stars"
 
-POLL_INTERVAL = 60  # seconds
+class StarTrackerWorker(WorkerBase):
+    """
+    A worker that fetches live star data for a specific constellation
+    from the AstronomyAPI and sends it to the FleetBridge GUI.
+    """
+    def __init__(self, config: dict):
+        super().__init__(config)
+        self.api_id = self.global_config.get("api_keys", {}).get("ASTRONOMY_API_ID", "")
+        self.api_secret = self.global_config.get("api_keys", {}).get("ASTRONOMY_API_SECRET", "")
+        self.auth_token = self._get_auth_token()
 
-def load_api_config():
-    try:
-        with open(CONFIG_PATH, "r") as f:
-            config = json.load(f)
-            return config.get("apis", [])
-    except Exception as e:
-        print(f"[SolarTracker] Failed to load API config: {e}")
-        return []
+    def _get_auth_token(self):
+        """Generates the authorization token for AstronomyAPI."""
+        if not self.api_id or not self.api_secret:
+            self.speak("API ID or Secret is missing. I cannot contact the star database.")
+            return None
+        try:
+            # Note: AstronomyAPI uses Basic Auth with the ID and Secret for this endpoint
+            response = requests.post(
+                "https://api.astronomyapi.com/api/v2/token",
+                auth=(self.api_id, self.api_secret)
+            )
+            response.raise_for_status()
+            return response.json().get("access_token")
+        except Exception as e:
+            self.speak(f"Could not get authorization token from AstronomyAPI. Error: {e}")
+            return None
 
-def load_alert_config():
-    try:
-        with open(ALERT_PATH, "r") as f:
-            user_config = json.load(f)
-            return { **DEFAULT_ALERTS, **user_config }
-    except Exception:
-        return DEFAULT_ALERTS
-
-def fetch_from_api(api):
-    try:
-        response = requests.get(api["url"], params=api.get("params", {}), timeout=10)
-        if response.status_code == 200:
+    def fetch_star_data(self):
+        """Fetches the star data using the stored auth token."""
+        if not self.auth_token:
+            return None
+            
+        headers = {"Authorization": f"Bearer {self.auth_token}"}
+        payload = {
+            "observer": {"latitude": 39.0438, "longitude": -77.4874, "date": time.strftime("%Y-%m-%d")},
+            "view": {"type": "constellation", "parameters": {"constellation": "ori"}} # Orion
+        }
+        try:
+            response = requests.post(API_URL, headers=headers, json=payload, timeout=15)
+            response.raise_for_status()
             return response.json()
-        else:
-            print(f"[SolarTracker] API {api['name']} returned {response.status_code}")
-    except Exception as e:
-        print(f"[SolarTracker] Error fetching from {api['name']}: {e}")
-    return {}
+        except Exception as e:
+            self.speak(f"API request failed: {e}")
+            return None
 
-def evaluate_alerts(data, config):
-    alerts = []
+    def format_for_gui(self, raw_data):
+        stars = [{"name": s.get("name"), "ra": s.get("ra"), "dec": s.get("dec"), "mag": s.get("magnitude")} for s in raw_data.get("data", {}).get("table", {}).get("rows", [])]
+        return {"source": self.name, "payload": {"stars": stars, "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ")}, "is_alert": False}
 
-    def check(metric, value, thresholds):
-        if value >= thresholds.get("critical", float("inf")):
-            alerts.append(f"{metric} CRITICAL: {value}")
-        elif value >= thresholds.get("warn", float("inf")):
-            alerts.append(f"{metric} WARNING: {value}")
+    def send_to_gui(self, data):
+        try:
+            requests.post("http://127.0.0.1:5555/update", json=data, timeout=2)
+            self.speak("Star chart update sent to FleetBridge.")
+        except requests.exceptions.RequestException:
+            pass # GUI probably isn't open
 
-    check("flux", data.get("flux", 0), config.get("flux", {}))
-    check("sunspots", data.get("sunspots", 0), config.get("sunspots", {}))
-
-    sw = data.get("solarWind", {})
-    check("solarWind.speed", sw.get("speed", 0), config.get("solarWind", {}).get("speed", {}))
-    check("solarWind.density", sw.get("density", 0), config.get("solarWind", {}).get("density", {}))
-
-    if "geomagneticIndex" in data:
-        check("geomagneticIndex", data["geomagneticIndex"], config.get("geomagneticIndex", {}))
-
-    return alerts
-
-def format_payload(raw_data, source_name, alert_config):
-    alerts = evaluate_alerts(raw_data, alert_config)
-    return {
-        "source": "SolarTracker",
-        "payload": {
-            "sourceName": source_name,
-            "timestamp": datetime.utcnow().isoformat() + "Z",
-            "data": raw_data,
-            "alerts": alerts
-        },
-        "is_alert": bool(alerts)
-    }
-
-def send_to_gui(payload):
-    try:
-        requests.post(FLEETBRIDGE_ENDPOINT, json=payload)
-        print(f"[SolarTracker] Sent update from {payload['payload']['sourceName']}")
-    except Exception as e:
-        print(f"[SolarTracker] Failed to send update: {e}")
-
-def run_tracker():
-    print("[SolarTracker] Worker online. Smart polling active.")
-    apis = load_api_config()
-
-    while True:
-        alert_config = load_alert_config()
-        for api in apis:
-            raw = fetch_from_api(api)
+    def execute_task(self, args: List[str], stop_event: threading.Event):
+        """Main loop for the worker."""
+        self.speak("Beginning star tracking sequence. I will send updates every 5 minutes.")
+        while not stop_event.is_set():
+            raw = self.fetch_star_data()
             if raw:
-                payload = format_payload(raw, api["name"], alert_config)
-                send_to_gui(payload)
-            time.sleep(POLL_INTERVAL)
+                formatted = self.format_for_gui(raw)
+                self.send_to_gui(formatted)
+            # Wait for 5 minutes or until a stop signal is received
+            stop_event.wait(300)
+        self.speak("Star tracking sequence complete.")
 
-if __name__ == "__main__":
-    run_tracker()
 
+# --- THIS IS THE FIX ---
+# Replace 'YourWorkerClassName' with the actual class name from this file.
+def create_worker(config: dict) -> StarTrackerWorker:
+    """Standard entry point for the AI to 'hire' this worker."""
+    return StarTrackerWorker(config)
